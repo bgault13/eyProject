@@ -1,0 +1,29 @@
+import bs4 as bs 
+import urllib.request
+import json
+
+my_dict = {} 
+
+# Obviously, put in your own url here
+sauce = urllib.request.urlopen('https://www.theglobeandmail.com/business/careers/leadership/article-kpmg-integrating-more-immigrant-women-into-the-canadian-work-force-is/'). read()
+
+soup = bs.BeautifulSoup(sauce, 'lxml')
+
+title = str(soup.title.text)
+
+print(title)
+
+
+text = ''
+for paragraph in soup.find_all('p'):
+	text += paragraph.text
+
+my_dict['article1'] = {
+	'Title': title,
+	'Text': text
+}
+
+s = json.dumps(my_dict)
+
+with open("/Users/Lily/Documents/articles.json", "w") as f:
+	f.write(s)
