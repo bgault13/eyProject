@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 12 20:46:44 2019
+
+@author: kylebradley
+"""
+
+import bs4 as bs 
+import urllib.request
+import json
+
+my_list = []
+lines = open('urls.txt','r')
+for line in lines:
+    # Obviously, put in your own url here
+    try:
+        sauce = urllib.request.urlopen(line).read()
+    except:
+        continue
+
+    soup = bs.BeautifulSoup(sauce, 'lxml')
+
+    title = str(soup.title.text)
+
+    print(title)
+
+    
+    text = ''
+    for paragraph in soup.find_all('p'):
+        text += paragraph.text
+
+    my_list.append({
+            'title': title,
+            'text': text
+            })
+s = json.dumps(my_list)
+
+with open("/Users/kylebradley/Documents/articles.json", "w") as f:
+	f.write(s)
