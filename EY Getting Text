@@ -1,0 +1,38 @@
+import json
+
+from selenium import webdriver
+
+from bs4 import BeautifulSoup
+
+with open("MarketwatchSearchResults.json") as json_file:
+	data = json.load(json_file)
+	for p in data['url']:
+		if "http://www.marketwatch.com" in p:
+			url = p
+
+			# create a new Firefox session
+			driver = webdriver.Firefox()
+			driver.implicitly_wait(30)
+			driver.get(url)
+
+
+
+
+			soup_level1=BeautifulSoup(driver.page_source, 'lxml')
+
+			datalist = [] #empty list
+			x = 0 #counter
+
+			#sometimes this breaks
+			for x in range(50):
+			    for link in driver.find_elements_by_xpath('//a[@href]'):
+			        if 'www.marketwatch.com/story' in link.get_attribute('href'):
+			                datalist.append(link.get_attribute('href'))
+			    try:
+			        driver.find_element_by_partial_link_text('Next').click()
+			    except:
+			        break
+
+			with open('urls.txt', 'w') as f:
+			    for item in datalist:
+			        f.write("%s\n" % item)
